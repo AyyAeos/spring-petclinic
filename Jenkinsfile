@@ -5,6 +5,10 @@ pipeline {
         PATH = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"
     }
 
+    tools {
+        maven 'Maven3'
+    }
+
     stages {
 
         stage('Build') {
