@@ -1,14 +1,10 @@
-pipeline {
+pipeline {    
     agent any
-
-    environment {
-        PATH = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"
-    }
-
+    
     tools {
         maven 'Maven3'
     }
-
+    
     stages {
 
         stage('Build') {
@@ -25,8 +21,6 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'which docker'
-                bat 'docker version'
                 bat 'docker build -t myapp:latest .'
             }
         }
