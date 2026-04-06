@@ -40,15 +40,17 @@ pipeline {
 
     post {
         always {
+            sh 'echo Checking target folder...'
+            sh 'ls -l target || true'
+    
             junit 'target/surefire-reports/*.xml'
-
+    
             jacoco(
                 execPattern: 'target/jacoco.exec',
                 classPattern: 'target/classes',
                 sourcePattern: 'src/main/java'
             )
             
-            archiveArtifacts artifacts: './target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true
+            archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true        }
         }
-    }
 }
