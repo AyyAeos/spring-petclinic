@@ -17,9 +17,9 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Test + Coverage') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test jacoco:report'
             }
         }
 
@@ -41,6 +41,12 @@ pipeline {
     post {
         always {
             junit 'target/surefire-reports/*.xml'
+
+            jacoco(
+                execPattern: 'target/jacoco.exec',
+                classPattern: 'target/classes',
+                sourcePattern: 'src/main/java'
+            )
         }
     }
 }
