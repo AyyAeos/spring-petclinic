@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin"
-    }
-
     tools {
         maven 'Maven3'
     }
