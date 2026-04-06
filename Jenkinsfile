@@ -46,7 +46,7 @@ pipeline {
                 sourcePattern: 'src/main/java'
             )
             
-            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            archiveArtifacts artifacts: './target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true
         }
     }
 }
