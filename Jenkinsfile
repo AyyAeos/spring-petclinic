@@ -35,6 +35,9 @@ pipeline {
     post {
         always {
             junit 'target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true
+            archiveArtifacts artifacts: 'target/site/jacoco/**/*', fingerprint: true
+            archiveArtifacts artifacts: 'target/surefire-reports/**/*', fingerprint: true
         }
     }
 }
