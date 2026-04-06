@@ -33,7 +33,7 @@ pipeline {
             steps {
                 sh "docker stop myapp || true"
                 sh "docker rm myapp || true"
-                sh 'docker run -d -p 8080:8080 myapp:latest'
+                sh 'docker run --name myapp -d -p 8080:8080 myapp:latest'
             }
         }
     }
