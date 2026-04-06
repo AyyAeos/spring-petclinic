@@ -12,7 +12,6 @@ pipeline {
         stage('Build') {
             steps {
                 bat './mvnw clean package -DskipTests -Dspring.profiles.active=mysql'
-                stash name: 'spring-pet-clinic-jar', includes: 'target/*.jar'
             }
         }
 
@@ -24,7 +23,6 @@ pipeline {
 
         stage('Docker Build & Run Container') {
             steps {
-                unstash 'spring-pet-clinic-jar'
                 bat 'docker compose down'
                 bat 'docker compose up -d'
             }
