@@ -9,31 +9,16 @@ pipeline {
     }
     
     stages {
-
         stage('Build') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                }
-            }
-
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw clean package -DskipTests -Dspring.profiles.active=mysql'
+                bat './mvnw clean package -DskipTests -Dspring.profiles.active=mysql'
                 stash name: 'spring-pet-clinic-jar', includes: 'target/*.jar'
             }
         }
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                }
-            }
-
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw test jacoco:report'
+                bat './mvnw test jacoco:report'
             }
         }
 
@@ -47,7 +32,7 @@ pipeline {
     }
 
     post {
-        always {
+        success {
             junit 'target/surefire-reports/*.xml'
 
             jacoco(
