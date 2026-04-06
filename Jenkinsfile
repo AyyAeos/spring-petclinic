@@ -25,8 +25,6 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'which docker'
-                sh 'docker version'
                 sh 'docker build -t myapp:latest .'
             }
         }
