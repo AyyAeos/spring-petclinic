@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
-        MYSQL_USER=petclinic
-        MYSQL_PASS=petclinic
-        MYSQL_DB=petclinic
+        MYSQL_USER="petclinic"
+        MYSQL_PASS="petclinic"
+        MYSQL_DB="petclinic"
     }
     
     stages {
