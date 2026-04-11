@@ -6,7 +6,7 @@ services:
     container_name: spring-pet-clinic-app
     image: spring-pet-clinic-app:v1
     ports:
-      - "8081:8080"
+      - "8080:8080"
     networks:
       - spring-pet-clinic-network
     environment:
