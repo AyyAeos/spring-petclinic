@@ -52,13 +52,8 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                        echo "Performing Static Code Analysis..."
-                        bat """
-                            ./mvnw sonar:sonar \
-                            -Dsonar.token=${SONAR_TOKEN} \
-                            -Dsonar.analysis.mode=publish
-                        """
+                        withSonarQubeEnv('petclinic') {
+                            sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic"
                         }
                     }
                 }
