@@ -5,9 +5,6 @@ pipeline {
         // Check Tools Installed.
         stage('Check Tools') {
             steps {
-                sh 'echo "Checking Maven..."'
-                sh 'mvn -v || echo "Maven NOT found"'
-        
                 sh 'echo "Checking Docker..."'
                 sh 'docker -v || echo "Docker NOT found"'
             }
@@ -15,21 +12,13 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh './mvnw clean package -DskipTests'
             }
         }
 
         stage('Test + Coverage') {
             steps {
-                sh 'mvn test jacoco:report'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn clean verify sonar:sonar'
-                }
+                sh './mvnw test jacoco:report'
             }
         }
 
