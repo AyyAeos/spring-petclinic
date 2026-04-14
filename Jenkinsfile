@@ -2,13 +2,6 @@ pipeline {
     agent any
 
     environment {
-        MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
-        MYSQL_USER="petclinic"
-        MYSQL_PASS="petclinic"
-        MYSQL_DB="petclinic"
-        POSTGRES_DB="petclinic"
-        POSTGRES_USER="petclinic"
-        POSTGRES_PASS="petclinic"
         IMG_NM = "petclinic-app"
     }
     
