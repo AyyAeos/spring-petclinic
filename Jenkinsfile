@@ -28,6 +28,22 @@ pipeline {
                 }
             }
 
+            stage('Upload Build and Test Artifacts') {
+                steps {
+                    junit 'target/surefire-reports/*.xml'
+    
+                    jacoco(
+                        execPattern: 'target/jacoco.exec',
+                        classPattern: 'target/classes',
+                        sourcePattern: 'src/main/java'
+                    )
+
+                    archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
+                    archiveArtifacts artifacts: 'target/site/jacoco/**/*'
+                    archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+                }
+            }
+
             stage('SonarQube Analysis') {
                 steps {
                     withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
@@ -53,15 +69,6 @@ pipeline {
                     docker rm myapp || true
                     docker run --name myapp -d -p 8080:8080 ${IMG_NM}
                     '''
-                }
-            }
-
-            stage ('Upload Artifacts and Report'){
-                steps {
-                    // archieve jar file and report for download purpose
-                    archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
-                    archiveArtifacts artifacts: 'target/site/jacoco/**/*'
-                    archiveArtifacts artifacts: 'target/surefire-reports/**/*'
                 }
             }
      }
