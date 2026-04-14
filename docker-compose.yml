@@ -13,9 +13,6 @@ services:
       - MYSQL_DB=petclinic
       - MYSQL_USER=petclinic
       - MYSQL_PASS=petclinic
-      - POSTGRES_DB=petclinic
-      - POSTGRES_USER=petclinic
-      - POSTGRES_PASS=petclinic
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -44,9 +41,9 @@ services:
     ports:
       - "5435:5432"
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASS}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=petclinic
+      - POSTGRES_USER=petclinic
+      - POSTGRES_DB=petclinic
 
 networks:
   spring-pet-clinic-network:
