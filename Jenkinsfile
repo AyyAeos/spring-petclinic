@@ -45,20 +45,16 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                        echo "Performing Static Code Analysis..."
-                        sh """
-                            ./mvnw sonar:sonar \
-                            -Dsonar.token=${SONAR_TOKEN} \
-                            -Dsonar.analysis.mode=publish
-                        """
+                        // Changed 'SonarQube' to 'petclinic' to match your screenshot
+                        withSonarQubeEnv('petclinic') {
+                            sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic-app"
                         }
                     }
                 }
             }
         }
 
-        stage('Sonar Quality Report') {
+        stage('Sonar Quality Gate') {
             steps {
                 waitForQualityGate abortPipeline: true
             }
