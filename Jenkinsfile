@@ -36,7 +36,7 @@ pipeline {
                     // build project
                     stage('Build') {
                         steps {
-                            sh './mvnw clean package -DskipTests'
+                            bat './mvnw clean package -DskipTests'
                         }
                     }
                 }
