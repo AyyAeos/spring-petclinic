@@ -44,9 +44,9 @@ services:
     ports:
       - "5435:5432"
     environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASS}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=petclinic
+      - POSTGRES_USER=petclinic
+      - POSTGRES_DB=petclinic
 
 networks:
   spring-pet-clinic-network:
