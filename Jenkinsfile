@@ -14,57 +14,56 @@ pipeline {
     
     stages {
         stage('Init and Build Project') {
-                parallel {
-                    // Check Docker Deamon is running
-                    stage('Check Tools') {
-                        steps {
-                            bat '''
-                            echo "Checking Docker Environment"
-                                docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
-                            }
-                        }
-    
-                    // start postgres database
-                    stage('Start Database') {
-                        steps {
-                            bat 'docker compose down'
-                            bat 'docker rm -f petclinic-postgres'
-                            bat 'docker compose up -d postgres'
+            parallel {
+                // Check Docker Deamon is running
+                stage('Check Tools') {
+                    steps {
+                        bat '''
+                        echo "Checking Docker Environment"
+                            docker info || { echo "Docker daemon is not running. ";exit 1; }                '''
                         }
                     }
-    
-                    // build project
-                    stage('Build') {
-                        steps {
-                            bat './mvnw clean package -DskipTests'
-                        }
+
+                // start postgres database
+                stage('Start Database') {
+                    steps {
+                        bat 'docker compose down'
+                        bat 'docker rm -f petclinic-postgres'
+                        bat 'docker compose up -d postgres'
                     }
                 }
+
+                // build project
+                stage('Build') {
+                    steps {
+                        bat './mvnw clean package -DskipTests'
+                    }
+                }
+            }
         }
 
-          stage ('Test and Quality Analysis') {
-                parallel {
-                    // stage('Test and Coverage Report') {
-                    //     steps {
-                    //         bat './mvnw test jacoco:report'
-                    //     }
-                    // }
-    
-                    stage('SonarQube Analysis') {
-                        steps {
-                            withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                            echo "Performing Static Code Analysis..."
-                            bat """
-                                ./mvnw sonar:sonar \
-                                -Dsonar.projectKey=petclinic \
-                                -Dsonar.token=${SONAR_TOKEN} \
-                                -Dsonar.analysis.mode=publish
-                            """
-                            }
+        stage('Test and Quality Analysis') {
+            parallel {
+                // stage('Test and Coverage Report') {
+                //     steps {
+                //         bat './mvnw test jacoco:report'
+                //     }
+                // }
+
+                stage('SonarQube Analysis') {
+                    steps {
+                        withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                        echo "Performing Static Code Analysis..."
+                        bat """
+                            ./mvnw sonar:sonar \
+                            -Dsonar.token=${SONAR_TOKEN} \
+                            -Dsonar.analysis.mode=publish
+                        """
                         }
                     }
                 }
             }
+        }
         
         stage('Sonar Quality Report') {
             steps {
