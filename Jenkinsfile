@@ -44,11 +44,11 @@ pipeline {
 
         stage('Test and Quality Analysis') {
             parallel {
-                // stage('Test and Coverage Report') {
-                //     steps {
-                //         bat './mvnw test jacoco:report'
-                //     }
-                // }
+                stage('Test and Coverage Report') {
+                    steps {
+                        bat './mvnw test jacoco:report'
+                    }
+                }
 
                 stage('SonarQube Analysis') {
                     steps {
