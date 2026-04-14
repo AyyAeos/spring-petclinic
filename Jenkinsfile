@@ -9,6 +9,7 @@ pipeline {
         POSTGRES_DB="petclinic"
         POSTGRES_USER="petclinic"
         POSTGRES_PASS="petclinic"
+        IMG_NM = "petclinic-app"
     }
     
     stages {
@@ -21,6 +22,19 @@ pipeline {
         stage('Test') {
             steps {
                 bat './mvnw test jacoco:report'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                echo "Performing Static Code Analysis..."
+                bat """
+                    ./mvnw sonar:sonar \
+                    -Dsonar.token=${SONAR_TOKEN} \
+                    -Dsonar.analysis.mode=publish
+                """
+                }
             }
         }
 
