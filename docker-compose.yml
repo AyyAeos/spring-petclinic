@@ -10,7 +10,7 @@ services:
     networks:
       - spring-pet-clinic-network
     environment:
-      - MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
+      - MYSQL_URL=jdbc:mysql://mysql-db:3306/petclinic
       - MYSQL_DB=petclinic
       - MYSQL_USER=petclinic
       - MYSQL_PASS=petclinic
