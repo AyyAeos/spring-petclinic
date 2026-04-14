@@ -6,55 +6,66 @@ pipeline {
     }
 
     stages {
-        // Check Docker Deamon is running
-        stage('Check Tools') {
-            steps {
-                sh '''
-                echo "Checking Docker Environment"
-                    docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
+        stage('Init and Build Project') {
+            parrellel {
+                // Check Docker Deamon is running
+                stage('Check Tools') {
+                    steps {
+                        sh '''
+                        echo "Checking Docker Environment"
+                            docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
+                        }
+                    }
+
+                // start postgres database
+                stage('Start Database') {
+                    steps {
+                        sh 'docker compose down'
+                        sh 'docker rm -f petclinic-postgres'
+                        sh 'docker compose up -d postgres'
+                        sleep 10
+                    }
                 }
-            }
 
-        stage('Start Database') {
-            steps {
-                sh 'docker compose down'
-                sh 'docker compose up -d postgres'
-                sleep 10
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh './mvnw clean package -DskipTests'
-            }
-        }
-
-        stage('Test and Coverage Report') {
-            steps {
-                sh './mvnw test jacoco:report'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                echo "Performing Static Code Analysis..."
-                sh """
-                    ./mvnw sonar:sonar \
-                    -Dsonar.token=${SONAR_TOKEN} \
-                    -Dsonar.analysis.mode=publish
-                """
+                // build project
+                stage('Build') {
+                    steps {
+                        sh './mvnw clean package -DskipTests'
+                    }
                 }
             }
         }
 
-        stage('Docker Build') {
+        stage ('Test and Quality Analysis') {
+            parallel {
+                stage('Test and Coverage Report') {
+                    steps {
+                        sh './mvnw test jacoco:report'
+                    }
+                }
+
+                stage('SonarQube Analysis') {
+                    steps {
+                        withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                        echo "Performing Static Code Analysis..."
+                        sh """
+                            ./mvnw sonar:sonar \
+                            -Dsonar.token=${SONAR_TOKEN} \
+                            -Dsonar.analysis.mode=publish
+                        """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build Image') {
             steps {
                 sh 'docker build -t ${IMG_NM} .'   
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker Container') {
             steps {
                 sh '''
                 docker stop myapp || true
