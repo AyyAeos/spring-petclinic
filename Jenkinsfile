@@ -6,6 +6,9 @@ pipeline {
         MYSQL_USER="petclinic"
         MYSQL_PASS="petclinic"
         MYSQL_DB="petclinic"
+        POSTGRES_DB="petclinic"
+        POSTGRES_USER="petclinic"
+        POSTGRES_PASS="petclinic"
     }
     
     stages {
