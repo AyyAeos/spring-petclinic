@@ -27,6 +27,19 @@ pipeline {
                 }
             }
 
+            stage('SonarQube Analysis') {
+                steps {
+                    withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                    echo "Performing Static Code Analysis..."
+                    sh """
+                        ./mvnw sonar:sonar \
+                        -Dsonar.token=${SONAR_TOKEN} \
+                        -Dsonar.analysis.mode=publish
+                    """
+                    }
+                }
+            }
+
             stage('Upload Build and Test Artifacts') {
                 steps {
                     junit 'target/surefire-reports/*.xml'
@@ -40,18 +53,7 @@ pipeline {
                     archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
                     archiveArtifacts artifacts: 'target/site/jacoco/**/*'
                     archiveArtifacts artifacts: 'target/surefire-reports/**/*'
-                }
-            }
-
-            stage('SonarQube Analysis') {
-                steps {
-                    withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                    echo "Performing Static Code Analysis..."
-                    sh """
-                        ./mvnw sonar:sonar \
-                        -Dsonar.token=${SONAR_TOKEN} \
-                    """
-                    }
+                    archiveArtifacts artifacts: 'target/sonar/report-task.txt'
                 }
             }
 
