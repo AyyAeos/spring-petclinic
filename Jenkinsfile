@@ -69,7 +69,8 @@ pipeline {
         stage('Docker Build & Run Container') {
             steps {
                 bat 'docker compose down'
-                bat 'docker compose -f docker-compose.yml up --build pet-clinic -d'
+                bat 'docker compose build pet-clinic'
+                bat 'docker compose -f docker-compose.yml up pet-clinic mysql-db -d'
             }
         }
     }
