@@ -11,8 +11,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Checking Docker Environment"
-                    docker info || {echo "Docker deamon is not running. "; exit 1; }
-                '''
+                    docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
                 }
             }
 
@@ -74,11 +73,6 @@ pipeline {
      }
 
     post {
-        always {
-            echo 'Cleaning up workspace'
-            deleteDir()
-        }
-
         success {
             echo 'Project Build succeeded!!!'
         }
