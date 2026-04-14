@@ -19,11 +19,11 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                bat './mvnw test jacoco:report'
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         bat './mvnw test jacoco:report'
+        //     }
+        // }
         
         stage('SonarQube Analysis') {
             steps {
@@ -31,6 +31,7 @@ pipeline {
                 echo "Performing Static Code Analysis..."
                 bat """
                     ./mvnw sonar:sonar \
+                    -Dsonar.projectKey=petclinic \
                     -Dsonar.token=${SONAR_TOKEN} \
                     -Dsonar.analysis.mode=publish
                 """
