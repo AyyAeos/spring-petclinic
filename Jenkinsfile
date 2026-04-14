@@ -2,7 +2,17 @@ pipeline {
     agent any
 
     stages {
-
+        // Check Tools Installed.
+        stage('Check Tools') {
+            steps {
+                sh 'echo "Checking Maven..."'
+                sh 'mvn -v || echo "Maven NOT found"'
+        
+                sh 'echo "Checking Docker..."'
+                sh 'docker -v || echo "Docker NOT found"'
+            }
+        }
+        
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
