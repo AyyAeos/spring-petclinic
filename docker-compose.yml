@@ -10,9 +10,12 @@ services:
     networks:
       - spring-pet-clinic-network
     environment:
-      - MYSQL_URL=${MYSQL_URL}
+      - MYSQL_DB=${MYSQL_DB}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASS=${MYSQL_PASS}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_URL_USER=${POSTGRES_USER}
+      - POSTGRES_PASS=${POSTGRES_PASS}
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -35,6 +38,15 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+  
+  postgres:
+    image: postgres:18.3
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASS}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
 
 networks:
   spring-pet-clinic-network:
