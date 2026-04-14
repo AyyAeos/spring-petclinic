@@ -13,55 +13,94 @@ pipeline {
     }
     
     stages {
-        stage('Build') {
-            steps {
-                bat './mvnw clean package -DskipTests "-Dspring.profiles.active=mysql"'
-            }
+        stage('Init and Build Project') {
+                parallel {
+                    // Check Docker Deamon is running
+                    stage('Check Tools') {
+                        steps {
+                            bat '''
+                            echo "Checking Docker Environment"
+                                docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
+                            }
+                        }
+    
+                    // start postgres database
+                    stage('Start Database') {
+                        steps {
+                            bat 'docker compose down'
+                            bat 'docker rm -f petclinic-postgres'
+                            bat 'docker compose up -d postgres'
+                        }
+                    }
+    
+                    // build project
+                    stage('Build') {
+                        steps {
+                            sh './mvnw clean package -DskipTests'
+                        }
+                    }
+                }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         bat './mvnw test jacoco:report'
-        //     }
-        // }
-        
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
-                echo "Performing Static Code Analysis..."
-                bat """
-                    ./mvnw sonar:sonar \
-                    -Dsonar.projectKey=petclinic \
-                    -Dsonar.token=${SONAR_TOKEN} \
-                    -Dsonar.analysis.mode=publish
-                """
+          stage ('Test and Quality Analysis') {
+                parallel {
+                    stage('Test and Coverage Report') {
+                        steps {
+                            bat './mvnw test jacoco:report'
+                        }
+                    }
+    
+                    stage('SonarQube Analysis') {
+                        steps {
+                            withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                            echo "Performing Static Code Analysis..."
+                            bat """
+                                ./mvnw sonar:sonar \
+                                -Dsonar.projectKey=petclinic \
+                                -Dsonar.token=${SONAR_TOKEN} \
+                                -Dsonar.analysis.mode=publish
+                            """
+                            }
+                        }
+                    }
                 }
+            }
+        
+        stage('Sonar Quality Report') {
+            steps {
+                waitForQualityGate abortPipeline: true
             }
         }
 
         stage('Docker Build & Run Container') {
             steps {
                 bat 'docker compose down'
-                bat 'docker compose -f docker-compose.yml up -d'
+                bat 'docker compose -f docker-compose.yml up --build pet-clinic -d'
             }
         }
     }
 
     post {
-        success {
+       always {
             junit 'target/surefire-reports/*.xml'
-
+    
             jacoco(
                 execPattern: 'target/jacoco.exec',
                 classPattern: 'target/classes',
                 sourcePattern: 'src/main/java'
             )
 
-            archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar', fingerprint: true
+            archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
+            archiveArtifacts artifacts: 'target/site/jacoco/**/*'
+            archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+        }
 
-            archiveArtifacts artifacts: 'target/site/jacoco/**/*', fingerprint: true
-            
-            archiveArtifacts artifacts: 'target/surefire-reports/**/*', fingerprint: true
+        success {
+            echo 'Project Build succeeded!'
+        }
+
+        failure {
+            echo 'Project Build failed!'
         }
     }
 }
