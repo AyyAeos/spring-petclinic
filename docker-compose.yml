@@ -10,12 +10,13 @@ services:
     networks:
       - spring-pet-clinic-network
     environment:
-      - MYSQL_DB=${MYSQL_DB}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASS=${MYSQL_PASS}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASS=${POSTGRES_PASS}
+      - MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
+      - MYSQL_DB=petclinic
+      - MYSQL_USER=petclinic
+      - MYSQL_PASS=petclinic
+      - POSTGRES_DB=petclinic
+      - POSTGRES_USER=petclinic
+      - POSTGRES_PASS=petclinic
     depends_on:
       mysql-db:
         condition: service_healthy
