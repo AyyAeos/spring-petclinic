@@ -77,20 +77,21 @@ pipeline {
 
     post {
         always {
-                junit 'target/surefire-reports/*.xml'
+            junit 'target/surefire-reports/*.xml'
     
-                jacoco(
-                    execPattern: 'target/jacoco.exec',
-                    classPattern: 'target/classes',
-                    sourcePattern: 'src/main/java'
-                )
+            jacoco(
+                execPattern: 'target/jacoco.exec',
+                classPattern: 'target/classes',
+                sourcePattern: 'src/main/java'
+            )
 
-                archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
-                archiveArtifacts artifacts: 'target/site/jacoco/**/*'
-                archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+            archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
+            archiveArtifacts artifacts: 'target/site/jacoco/**/*'
+            archiveArtifacts artifacts: 'target/surefire-reports/**/*'
         }
+        
         success {
-            echo 'Project Build succeeded!!!'
+            echo 'Project Build succeeded!'
         }
 
         failure {
