@@ -58,6 +58,12 @@ pipeline {
             }
         }
 
+        stage('Sonar Quality Report') {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }       
+
         stage('Build Image') {
             steps {
                 sh 'docker build -t ${IMG_NM} .'   
@@ -89,7 +95,7 @@ pipeline {
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
         }
-        
+
         success {
             echo 'Project Build succeeded!'
         }
