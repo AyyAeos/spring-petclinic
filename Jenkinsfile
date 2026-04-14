@@ -45,7 +45,9 @@ pipeline {
 
                 stage('SonarQube Analysis') {
                     steps {
-                        sh "./mvnw sonar:sonar -Dsonar.projectKey=petclinic"
+                        withCredentials([string(credentialsId: 'sonar_id1', variable: 'SONAR_TOKEN')]) {
+                            sh "./mvnw sonar:sonar -Dsonar.token=${SONAR_TOKEN} -Dsonar.projectKey=petclinic"
+                        }
                     }
                 }
             }
