@@ -4,17 +4,19 @@ pipeline {
     environment {
         IMAGE_NAME = "petclinic-app"
     }
+
+    tools {
+        jdk 'JDK17'
+    }
+
     stages {
 
         stage('Check Tools') {
             steps {
                 sh '''
-                echo "Checking Docker..."
-                    docker -v || exit 1
-
-                echo "Checking Docker daemon..."
-                    docker info || exit 1
-                    '''
+                echo "Checking Docker Environment"
+                    docker info || {echo "Docker deamon is not running. "; exit 1; }
+                '''
                 }
             }
 
