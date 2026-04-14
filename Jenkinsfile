@@ -3,9 +3,10 @@ pipeline {
 
     environment {
         IMG_NM = "petclinic-app"
-        DB_URL = "jdbc:postgresql://localhost:5432/petclinic"
-        DB_USER = "petclinic"
-        DB_PASS = "petclinic"
+        MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
+        MYSQL_USER="petclinic"
+        MYSQL_PASS="petclinic"
+        MYSQL_DB="petclinic"
     }
 
     stages {
@@ -21,7 +22,7 @@ pipeline {
         stage('Start Database') {
             steps {
                 sh 'docker compose down'
-                sh 'docker compose up -d postgres'
+                sh 'docker compose up -d mysql'
                 sleep 2
             }
         }
@@ -30,20 +31,16 @@ pipeline {
                 steps {
 sh '''
 ./mvnw clean package -DskipTests \
--Dspring.profiles.active=postgres \
--Dspring.datasource.url=jdbc:postgresql://host.docker.internal:5432/petclinic
+-Dspring.profiles.active=mysql \
+
 '''                }
             }
 
             stage('Test and Coverage Report') {
                 steps {
-sh '''
-./mvnw test jacoco:report \
--Dspring.profiles.active=postgres \
--Dspring.datasource.url=jdbc:postgresql://host.docker.internal:5432/petclinic \
--Dspring.datasource.username=petclinic \
--Dspring.datasource.password=petclinic
-'''                }
+                    sh '''
+                    ./mvnw test jacoco:report 
+                    '''                }
             }
 
             stage('SonarQube Analysis') {
