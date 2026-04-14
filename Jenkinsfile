@@ -3,6 +3,10 @@ pipeline {
 
     environment {
         IMG_NM = "petclinic-app"
+        MYSQL_URL="jdbc:mysql://mysql-db:3306/petclinic"
+        MYSQL_USER="petclinic"
+        MYSQL_PASS="petclinic"
+        MYSQL_DB="petclinic"
     }
 
     stages {
@@ -17,13 +21,14 @@ pipeline {
 
         stage('Start Database') {
             steps {
-                sh 'docker-compose up -d'
+                sh 'docker compose down'
+                sh 'docker compose up -d mysql'
             }
         }
 
             stage('Build') {
                 steps {
-                    sh './mvnw clean package -DskipTests'
+                    sh './mvnw clean package -DskipTests "-Dspring.profiles.active=mysql"'
                 }
             }
 
