@@ -1,32 +1,39 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-21'
+        }
+    }
 
     stages {
 
-            stage('Check Tools') {
-                steps {
-                    sh '''
-                    echo "Checking Docker..."
+        stage('Check Tools') {
+            steps {
+                sh '''
+                echo "Checking Docker..."
                     docker -v || exit 1
+
+                echo "Checking Docker daemon..."
+                    docker info || exit 1
                     '''
                 }
             }
 
             stage('Build') {
                 steps {
-                    sh './mvnw clean package -DskipTests'
+                    sh 'mvn clean package -DskipTests'
                 }
             }
 
             stage('Test + Coverage') {
                 steps {
-                    sh './mvnw test jacoco:report'
+                    sh 'mvn test jacoco:report'
                 }
             }
 
             stage('Build Image') {
                 steps {
-                    sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=myapp:latest'
+                    sh 'mvn spring-boot:build-image -Dspring-boot.build-image.imageName=myapp:latest'
                 }
             }
 
