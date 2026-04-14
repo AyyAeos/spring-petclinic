@@ -13,6 +13,7 @@ services:
       - "./conf.d:/etc/mysql/conf.d:ro"
   postgres:
     image: postgres:18.3
+    container_name: petclinic-postgres
     ports:
       - "5433:5432"
     environment:
