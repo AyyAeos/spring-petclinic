@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        IMG_NM = "petclinic-app"
-    }
-
     stages {
 
         stage ('Check Tools') {
@@ -15,12 +11,15 @@ pipeline {
                     docker info || { echo "Docker daemon is not running. "; exit 1; }                '''
             }
         }
+
         stage('Initialize and Build Project') {
             parallel {
 
                 // stop exisiting application in docker
                 stage ('Stop Exisiting Application') {
-                    sh 'docker compose down'
+                    steps {
+                        sh 'docker compose down'
+                    }
                 }
 
                 // build project
