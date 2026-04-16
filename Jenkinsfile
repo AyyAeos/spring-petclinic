@@ -64,9 +64,6 @@ pipeline {
 
     post {
         always {
-
-            // get test reports
-            junit 'target/surefire-reports/*.xml'
     
             // generate jacoco report
             jacoco(
@@ -76,9 +73,14 @@ pipeline {
             )
 
             // archieve report for download
+            // archieve built jar
             archiveArtifacts artifacts: 'target/spring-petclinic-4.0.0-SNAPSHOT.jar'
+            // archieve code coverage report
             archiveArtifacts artifacts: 'target/site/jacoco/**/*'
+            // archieve surefire report
             archiveArtifacts artifacts: 'target/surefire-reports/**/*'
+            // archieve surefire  final result html file.
+            archiveArtifacts artifacts: 'target/reports/surefire.html'
         }
 
         // success message
